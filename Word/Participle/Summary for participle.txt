@@ -1,0 +1,3 @@
+This program will identify participles.
+Participles are words that usually end 
+in -ing, -ed, -en, that is used as an adjective.

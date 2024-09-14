@@ -1,0 +1,3 @@
+This program will list all of the words in a book as Typoglycemic.
+The words for now will be first and last letter the same and the 
+middle letters in alphabetical order.

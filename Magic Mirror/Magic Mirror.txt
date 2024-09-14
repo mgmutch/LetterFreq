@@ -1,0 +1,38 @@
+import re
+
+
+letters = [chr(ord("a")+i) for i in range(26)]
+
+
+def convert(sentence):
+
+    buf = re.sub(r'[^a-zA-Z]', '', sentence.lower())
+
+    counter = [0] * 26
+
+    for j, letter in enumerate(letters):
+
+        counter[j] = buf.count(letter)
+
+    return ','.join([str(n) for n in counter])
+
+
+print(convert('The building was owned by a zealous attorney.'))
+
+print(convert('True goal you want body size with banal needs.'))
+
+
+
+
+with this program, I got the following result.
+
+Each column shows the number of each letter in the sentence.
+
+The first column is the number of letter 'a', the second is 'b',,, and so on.
+
+
+4,2,0,2,4,0,1,1,2,0,0,2,0,3,3,0,0,1,2,3,2,0,2,0,2,1
+
+4,2,0,2,4,0,1,1,2,0,0,2,0,3,3,0,0,1,2,3,2,0,2,0,2,1
+
+

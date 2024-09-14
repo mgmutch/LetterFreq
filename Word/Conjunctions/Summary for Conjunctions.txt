@@ -1,0 +1,5 @@
+This program will identify all sentences which use a conjunction.
+
+Example:
+
+And, either, since, but...

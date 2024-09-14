@@ -1,0 +1,2 @@
+This program will check all the combinations and verify if the same letters 
+are being used in sentences with different arrangements.

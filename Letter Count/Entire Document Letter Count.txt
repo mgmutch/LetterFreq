@@ -1,0 +1,1 @@
+This program will give a count of all letters in a document.

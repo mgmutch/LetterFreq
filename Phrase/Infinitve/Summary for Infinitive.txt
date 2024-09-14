@@ -1,0 +1,8 @@
+This program will identify infinities used in a document.
+
+An infinitive is the form of the verb with to followed by the verb. 
+you may substitute with a noun, adjective or adverb.
+
+Example,
+
+To know, to see, to go, to shop, to be...

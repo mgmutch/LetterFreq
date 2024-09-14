@@ -1,0 +1,2 @@
+Pronouns take the place of nouns. 
+This program will identify all sentences with pronouns.

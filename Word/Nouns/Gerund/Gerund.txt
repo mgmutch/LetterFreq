@@ -1,0 +1,2 @@
+This program will identify gerunds.
+A gerund is a word ending in -ing, that is a noun.

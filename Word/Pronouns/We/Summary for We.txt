@@ -1,0 +1,1 @@
+This program will identify all sentences using the word we.

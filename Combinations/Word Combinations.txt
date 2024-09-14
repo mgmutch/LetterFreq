@@ -1,0 +1,8 @@
+
+1. Enter key words.
+2. Check each sentence in a file.
+3. If a sentence contains all key words then it is a match.
+4. The first order is words in sequence.
+5. The second order is words not in sequence.
+6. Output matches as whole sentences.
+7. Below each sentence output key words in question

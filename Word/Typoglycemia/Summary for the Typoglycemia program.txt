@@ -1,0 +1,4 @@
+This program will rearrange the letter in words keeping 
+the first and last letter the same and putting the middle 
+letters in alphabetical order in words longer than three 
+letters and words that contain identical middle letters.

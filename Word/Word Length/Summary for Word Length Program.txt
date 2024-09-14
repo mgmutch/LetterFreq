@@ -1,0 +1,38 @@
+The program called Word Length will sort all the words
+from longest word to shortest word. The data will 
+include number of letters in each word.
+
+Example:
+
+One letter words.
+i, a
+
+Two letter words.
+By, at, in, on, ad, am, an, as, be...
+
+Three letter words.
+bed, sit, was, has, tip, fat...
+
+Four letter words.
+here, that, this, good...
+
+Five letter words.
+drink, seven, knows, ...
+
+Six letter words.
+fixing, letter... 
+
+Seven letter words.
+imagining, washing, letters...
+
+Eight letter words.
+finances, rosemary...
+
+Nine letter words.
+Ten letter words.
+Eleven letter words.
+Twelve letter words.
+Thirteen letter words.
+Fourteen letter words.
+Fifteen letter words.
+Sixteen letter words.

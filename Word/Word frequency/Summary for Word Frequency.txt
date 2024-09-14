@@ -1,0 +1,2 @@
+This program will list the complete dictionary of words used in a document.
+The words or the vocabulary will be listed in order of frequency.
