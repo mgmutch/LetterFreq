@@ -1,0 +1,396 @@
+import os
+import datetime
+import math
+import json
+import tkinter as tk
+from tkinter import messagebox
+from skyfield.api import load, Topos
+from datetime import datetime
+import pandas as pd  # For Excel file handling
+import docx  # For Word document handling
+
+# Function to check if a number is prime
+def is_prime(n):
+    if n <= 1:
+        return False
+    if n == 2:
+        return True
+    if n % 2 == 0:
+        return False
+    for i in range(3, int(math.sqrt(n)) + 1, 2):
+        if n % i == 0:
+            return False
+    return True
+
+# Function to generate prime numbers in order
+def generate_primes():
+    num = 2
+    while True:
+        if is_prime(num):
+            yield num
+        num += 1
+
+# Function to calculate the vibration of a prime number (Egyptian math)
+def calculate_vibration(prime):
+    while prime >= 10:
+        prime = sum(int(digit) for digit in str(prime))
+    return prime
+
+# List of 90 stars with magnitude, weight, and distance
+stars = [
+    {"name": "Sirius", "magnitude": -1.46, "weight": 2.02, "distance": 8.6},
+    {"name": "Canopus", "magnitude": -0.74, "weight": 8.5, "distance": 310},
+    {"name": "Arcturus", "magnitude": -0.05, "weight": 1.08, "distance": 36.7},
+    {"name": "Rigel", "magnitude": 0.13, "weight": 21, "distance": 860},
+    {"name": "Vega", "magnitude": 0.03, "weight": 2.135, "distance": 25},
+    # Add more stars with magnitude, weight, and distance data
+]
+
+# Function to sort stars by magnitude, weight, or distance
+def sort_stars(by="magnitude"):
+    if by == "magnitude":
+        return sorted(stars, key=lambda x: x["magnitude"])
+    elif by == "weight":
+        return sorted(stars, key=lambda x: x["weight"])
+    elif by == "distance":
+        return sorted(stars, key=lambda x: x["distance"])
+    else:
+        return stars
+
+# Function to get a star name for a given day
+def get_star_name(day_index):
+    sorted_stars = sort_stars("magnitude")  # Default sort by magnitude
+    return sorted_stars[day_index % len(sorted_stars)]["name"]
+
+# Function to calculate days since birth
+def days_since_birth(birthdate):
+    today = datetime.date.today()
+    return (today - birthdate).days
+
+# Function to save data to a file
+def save_data(data, filename="day_data.json"):
+    with open(filename, "w") as file:
+        json.dump(data, file, indent=4)
+
+# Function to load data from a file
+def load_data(filename="day_data.json"):
+    try:
+        with open(filename, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+# Function to add receipt data
+def add_receipt():
+    time = input("Enter the time of purchase (HH:MM:SS): ")
+    year = input("Enter the year of purchase (YYYY): ")
+    month = input("Enter the month of purchase (MM): ")
+    day = input("Enter the day of purchase (DD): ")
+    price = input("Enter the price: ")
+    payment_method = input("Enter payment method (Cash/Credit): ")
+    product = input("Enter the product name: ")
+    location = input("Enter the location of purchase: ")
+
+    receipt = {
+        "time": time,
+        "year": year,
+        "month": month,
+        "day": day,
+        "price": price,
+        "payment_method": payment_method,
+        "product": product,
+        "location": location
+    }
+    return receipt
+
+# Function to display time with colors
+def display_time_with_colors(time):
+    # Color mapping
+    color_map = {
+        "0": "black",
+        "1": "lavender",
+        "2": "red",
+        "3": "orange",
+        "4": "green",
+        "5": "yellow",
+        "6": "pink",
+        "7": "brown",
+        "8": "turquoise",
+        "9": "indigo"
+    }
+
+    # Create a tkinter window
+    root = tk.Tk()
+    root.title("Time Color Display")
+    root.geometry("400x100")
+
+    # Display each digit with its corresponding color
+    for i, char in enumerate(time):
+        if char in color_map:
+            label = tk.Label(root, text=char, fg=color_map[char], font=("Arial", 24))
+            label.grid(row=0, column=i, padx=5)
+
+    root.mainloop()
+
+# Function to add appointment data
+def add_appointment():
+    appointment_type = input("Enter appointment type (doctor, caseworker, therapist, judge, other): ")
+    person_name = input("Enter the name of the person: ")
+    appointment_time = input("Enter the appointment time (HH:MM:SS): ")
+    notes = input("Enter any notes for the appointment: ")
+
+    appointment = {
+        "type": appointment_type,
+        "person_name": person_name,
+        "time": appointment_time,
+        "notes": notes
+    }
+    return appointment
+
+# Function to calculate transit data for stars, planets, and the Moon
+def calculate_transit_data(latitude, longitude, date_time):
+    """
+    Calculate transit data for stars, planets, and the Moon for a given location and time.
+    
+    Args:
+        latitude (float): Latitude of the observer's location.
+        longitude (float): Longitude of the observer's location.
+        date_time (str): Date and time in the format 'YYYY-MM-DD HH:MM:SS'.
+    
+    Returns:
+        Dictionary containing transit data for the Moon, planets, and stars.
+    """
+    # Load ephemeris data
+    eph = load('de421.bsp')  # Load JPL ephemeris
+    ts = load.timescale()    # Load timescale
+
+    # Define observer's location
+    observer_location = Topos(latitude_degrees=latitude, longitude_degrees=longitude)
+
+    # Parse the input date and time
+    observer_time = ts.utc(datetime.strptime(date_time, '%Y-%m-%d %H:%M:%S'))
+
+    # Load celestial bodies
+    sun = eph['sun']
+    moon = eph['moon']
+    planets = {
+        'Mercury': eph['mercury'],
+        'Venus': eph['venus'],
+        'Mars': eph['mars'],
+        'Jupiter': eph['jupiter barycenter'],
+        'Saturn': eph['saturn barycenter'],
+        'Uranus': eph['uranus barycenter'],
+        'Neptune': eph['neptune barycenter'],
+        'Pluto': eph['pluto barycenter']
+    }
+
+    # Calculate transit data
+    transit_data = {}
+
+    # Moon transit
+    moon_alt, moon_az, _ = (moon - observer_location).at(observer_time).altaz()
+    transit_data['Moon'] = {
+        'altitude': moon_alt.degrees,
+        'azimuth': moon_az.degrees
+    }
+
+    # Planets transit
+    for planet_name, planet in planets.items():
+        planet_alt, planet_az, _ = (planet - observer_location).at(observer_time).altaz()
+        transit_data[planet_name] = {
+            'altitude': planet_alt.degrees,
+            'azimuth': planet_az.degrees
+        }
+
+    # Stars transit (example: Sirius)
+    stars = {
+        'Sirius': ('06h 45m 08.9s', '-16° 42′ 58″'),
+        'Betelgeuse': ('05h 55m 10.3s', '+07° 24′ 25″'),
+        'Vega': ('18h 36m 56.3s', '+38° 47′ 01″')
+    }
+
+    for star_name, (ra, dec) in stars.items():
+        star = Star(ra=ra, dec=dec)
+        star_alt, star_az, _ = star.at(observer_time).observe(observer_location).apparent().altaz()
+        transit_data[star_name] = {
+            'altitude': star_alt.degrees,
+            'azimuth': star_az.degrees
+        }
+
+    return transit_data
+
+# Function to format transit data into a human-readable string
+def format_transit_data(transit_data):
+    """
+    Format transit data into a human-readable string.
+    
+    Args:
+        transit_data (dict): Transit data for celestial bodies.
+    
+    Returns:
+        Formatted string with transit data.
+    """
+    result = []
+    for body, data in transit_data.items():
+        result.append(f"{body}:")
+        result.append(f"  Altitude: {data['altitude']:.2f}°")
+        result.append(f"  Azimuth: {data['azimuth']:.2f}°")
+    return "\n".join(result)
+
+# Function to scan a folder and check file types
+def scan_folder(folder_path):
+    """
+    Scan a folder for Excel (.xlsx), Word (.docx), and Notepad (.txt) files.
+    
+    Args:
+        folder_path (str): Path to the folder to scan.
+    
+    Returns:
+        Dictionary containing lists of valid files.
+    """
+    valid_files = {
+        "excel_files": [],
+        "word_files": [],
+        "text_files": []
+    }
+
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if filename.endswith(".xlsx"):
+            valid_files["excel_files"].append(file_path)
+        elif filename.endswith(".docx"):
+            valid_files["word_files"].append(file_path)
+        elif filename.endswith(".txt"):
+            valid_files["text_files"].append(file_path)
+
+    return valid_files
+
+# Function to check if a file meets criteria
+def check_file_criteria(file_path):
+    """
+    Check if a file meets specific criteria to be included as data.
+    
+    Args:
+        file_path (str): Path to the file.
+    
+    Returns:
+        Boolean indicating whether the file meets the criteria.
+    """
+    if file_path.endswith(".xlsx"):
+        # Example: Check if the Excel file has at least one sheet
+        try:
+            df = pd.read_excel(file_path)
+            return not df.empty
+        except Exception:
+            return False
+    elif file_path.endswith(".docx"):
+        # Example: Check if the Word document has at least one paragraph
+        try:
+            doc = docx.Document(file_path)
+            return len(doc.paragraphs) > 0
+        except Exception:
+            return False
+    elif file_path.endswith(".txt"):
+        # Example: Check if the text file is not empty
+        try:
+            with open(file_path, "r") as file:
+                return len(file.read()) > 0
+        except Exception:
+            return False
+    return False
+
+# Main program
+def main():
+    # Input birthdate
+    birthdate_input = input("Enter your birthdate (YYYY-MM-DD): ")
+    birthdate = datetime.date.fromisoformat(birthdate_input)
+
+    # Calculate days since birth
+    days = days_since_birth(birthdate)
+    print(f"Days since your birth: {days}")
+
+    # Load existing data
+    data = load_data()
+
+    # Initialize prime generator
+    prime_gen = generate_primes()
+
+    # Iterate through each day since birth
+    for day_index in range(days):
+        day_key = f"Day {day_index + 1}"
+        if day_key not in data:
+            # Assign a prime number
+            prime_number = next(prime_gen)
+            # Calculate prime vibration
+            vibration = calculate_vibration(prime_number)
+            # Assign a star name
+            star_name = get_star_name(day_index)
+            # Initialize day data
+            data[day_key] = {
+                "prime_number": prime_number,
+                "prime_vibration": vibration,
+                "star_name": star_name,
+                "receipts": [],
+                "journal_entries": [],
+                "appointments": [],
+                "notes": []
+            }
+
+    # Allow user to add data for a specific day
+    day_to_update = input(f"Enter a day number (1 to {days}) to update, or 'exit' to quit: ")
+    if day_to_update.lower() == "exit":
+        save_data(data)
+        print("Data saved. Exiting program.")
+        return
+
+    day_to_update = int(day_to_update)
+    if day_to_update < 1 or day_to_update > days:
+        print("Invalid day number.")
+        return
+
+    day_key = f"Day {day_to_update}"
+    print(f"Updating {day_key} - Prime: {data[day_key]['prime_number']}, Vibration: {data[day_key]['prime_vibration']}, Star: {data[day_key]['star_name']}")
+
+    # Add receipt data
+    add_receipt_option = input("Do you want to add a receipt? (yes/no): ")
+    if add_receipt_option.lower() == "yes":
+        receipt = add_receipt()
+        data[day_key]["receipts"].append(receipt)
+        # Display time with colors
+        display_time_with_colors(receipt["time"])
+
+    # Add journal entry
+    journal_entry = input("Enter journal entry (or leave blank to skip): ")
+    if journal_entry:
+        data[day_key]["journal_entries"].append(journal_entry)
+
+    # Add appointment data
+    add_appointment_option = input("Do you want to add an appointment? (yes/no): ")
+    if add_appointment_option.lower() == "yes":
+        appointment = add_appointment()
+        data[day_key]["appointments"].append(appointment)
+
+    # Add notes
+    note = input("Enter a note (or leave blank to skip): ")
+    if note:
+        data[day_key]["notes"].append(note)
+
+    # Save updated data
+    save_data(data)
+    print("Data updated and saved.")
+
+    # Scan desktop folder for valid files
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    valid_files = scan_folder(desktop_path)
+
+    # Check if files meet criteria
+    for file_type, files in valid_files.items():
+        print(f"\nChecking {file_type}:")
+        for file_path in files:
+            if check_file_criteria(file_path):
+                print(f"  {file_path} meets criteria.")
+            else:
+                print(f"  {file_path} does not meet criteria.")
+
+if __name__ == "__main__":
+    main()
